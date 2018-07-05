@@ -50,8 +50,15 @@ class BlockChain{
 }
 
 function formatDate(date) {
+
   day = date.getDate();
-  month = date.getMonth();
+  if (day < 10 ) {
+    day = '0' + day;
+  }
+  month = date.getMonth() + 1;
+  if (month < 10) {
+    month = '0' + month;
+  }
   year = date.getFullYear();
 
   return day + '/' + month + '/' + year;
@@ -61,7 +68,7 @@ function formatDate(date) {
 let myChain = new BlockChain();
 
 for (let i = 1; i < 5; i++){
-  myChain.addBlock(new Block(i, formatDate(new Date())))
+  myChain.addBlock(new Block(i, formatDate(new Date()), { amount: i*3 }))
 }
 
 console.log(myChain);
