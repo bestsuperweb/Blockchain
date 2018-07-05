@@ -6,16 +6,26 @@ class Block{
     this.timestamp = timestamp;
     this.data = data;
     this.hash = this.calculateHash();
+    this.nounce = 0;
   }
 
   calculateHash() {
-    return SHA256(this.index + this.previousHash + this.timestamp + JSON.stringify(this.data)).toString();
+    return SHA256(this.index + this.previousHash + this.timestamp + JSON.stringify(this.data) + this.nounce).toString();
+  }
+
+  mineBlock(difficulty) {
+    while (this.hash.substring(0, difficulty) !== Array(difficulty + 1).join('0')){
+      this.nounce++;
+      this.hash = this.calculateHash();
+    }
+    console.log("Block mined: " + this.hash);
   }
 }
 
 class BlockChain{
   constructor() {
     this.chain = [this.createGenesisBlock()];
+    this.difficulty = 2;
   }
 
   createGenesisBlock() {
@@ -28,7 +38,7 @@ class BlockChain{
 
   addBlock(newBlock) {
     newBlock.previousHash = this.getLatestBlock().hash;
-    newBlock.hash = newBlock.calculateHash();
+    newBlock.mineBlock(this.difficulty);
     this.chain.push(newBlock);
   }
 
@@ -68,7 +78,6 @@ function formatDate(date) {
 let myChain = new BlockChain();
 
 for (let i = 1; i < 5; i++){
+  console.log('Mining block ' + i + '...');
   myChain.addBlock(new Block(i, formatDate(new Date()), { amount: i*3 }))
 }
-
-console.log(myChain);
